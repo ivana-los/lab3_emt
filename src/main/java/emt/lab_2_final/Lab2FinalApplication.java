@@ -1,0 +1,21 @@
+package emt.lab_2_final;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+@SpringBootApplication
+public class Lab2FinalApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(Lab2FinalApplication.class, args);
+    }
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
+
+
+}
