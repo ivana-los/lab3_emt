@@ -1,14 +1,20 @@
-import { useEffect, useState } from "react";
-import { getCountries } from "../api/countriesRepository";
+import { useEffect, useState } from 'react';
+import type { Country } from '../types';
+import CountryApi from '../api/countriesapi';
 
-export const useCountries = () => {
-    const [countries, setCountries] = useState<any[]>([]);
+const useCountries = () => {
+    const [countries, setCountries] = useState<Country[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        getCountries()
-            .then((res) => setCountries(res.data))
-            .catch((err) => console.error(err));
+        CountryApi.findAll()
+            .then(setCountries)
+            .catch(() => setError('Error'))
+            .finally(() => setLoading(false));
     }, []);
 
-    return countries;
+    return { countries, loading, error };
 };
+
+export default useCountries;

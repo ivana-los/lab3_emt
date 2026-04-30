@@ -1,22 +1,78 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getBookById } from "../api/booksRepository";
+import { useParams, useNavigate } from 'react-router';
+import { Box, Button, Chip, Divider, Paper, Typography } from '@mui/material';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import useBook from '../hooks/useBook';
+import LoadingSpinner from '../components/layout/LoadingSpinner';
+import ErrorMessage from '../components/layout/ErrorMessage';
 
-export default function BookDetails() {
+const BookDetails = () => {
     const { id } = useParams();
-    const [book, setBook] = useState<any>(null);
+    const navigate = useNavigate();
+    const { book, loading, error } = useBook(Number(id));
 
-    useEffect(() => {
-        getBookById(Number(id)).then((res) => setBook(res.data));
-    }, [id]);
-
-    if (!book) return <p>Loading...</p>;
+    if (loading) return <LoadingSpinner />;
+    if (error || !book) return <ErrorMessage message={error ?? 'Book not found'} />;
 
     return (
-        <div>
-            <h2>{book.name}</h2>
-            <p>{book.category}</p>
-            <p>{book.availableCopies}</p>
-        </div>
+        <>
+            <Button
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate('/books')}
+                sx={{ mb: 3 }}
+            >
+                Back to books
+            </Button>
+
+            <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+                    {book.name}
+                <Divider sx={{ mb: 3 }} />
+
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ minWidth: 140 }}>
+                            Category:
+                        </Typography>
+                        <Chip label={book.category} color="primary" variant="outlined" />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ minWidth: 140 }}>
+                            State:
+                        </Typography>
+                        <Chip
+                            label={book.state}
+                            color={book.state === 'GOOD' ? 'success' : 'error'}
+                            variant="outlined"
+                        />
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ minWidth: 140 }}>
+                            Author:
+                        </Typography>
+                        <Typography variant="body1">{book.authorFullName}</Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ minWidth: 140 }}>
+                            Country:
+                        </Typography>
+                        <Typography variant="body1">{book.country}</Typography>
+                    </Box>
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ minWidth: 140 }}>
+                            Available BookCopies:
+                        </Typography>
+                        <Chip
+                            label={book.availableCopies.toString()}
+                            color={book.availableCopies > 0 ? 'success' : 'error'}
+                        />
+                    </Box>
+                </Box>
+            </Paper>
+        </>
     );
-}
+};
+
+export default BookDetails;

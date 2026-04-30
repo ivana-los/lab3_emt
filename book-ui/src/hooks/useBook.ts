@@ -1,20 +1,21 @@
+
 import { useEffect, useState } from 'react';
 import type { Book } from '../types';
 import BookApi from '../api/booksapi';
 
-const useBooks = () => {
-    const [books, setBooks] = useState<Book[]>([]);
+const useBook = (id: number) => {
+    const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        BookApi.findAll()
-            .then(setBooks)
+        BookApi.findById(id)
+            .then(setBook)
             .catch(() => setError('Error'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [id]);
 
-    return { books, loading, error };
+    return { book, loading, error };
 };
 
-export default useBooks;
+export default useBook;

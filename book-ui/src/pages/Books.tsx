@@ -1,25 +1,37 @@
-import { useBooks } from "../hooks/useBooks";
-import { Grid, Card, CardContent, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Grid } from '@mui/material';
+import useBooks from '../hooks/useBooks';
+import EntityCard from '../components/layout/EntityCard';
+import LoadingSpinner from '../components/layout/LoadingSpinner';
+import ErrorMessage from '../components/layout/ErrorMessage';
+import Header from '../components/layout/Header';
 
-export default function Books() {
-    // @ts-ignore
-    const { books, loading } = useBooks();
+const Books = () => {
+    const { books, loading, error } = useBooks();
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <LoadingSpinner />;
+    if (error) return <ErrorMessage message={error} />;
 
     return (
-        <Grid container spacing={2}>
-            {books.map((book: any) => (
-                <Grid item xs={12} md={4} key={book.id}>
-                    <Card component={Link} to={`/books/${book.id}`} sx={{ textDecoration: "none" }}>
-                        <CardContent>
-                            <Typography variant="h6">{book.name}</Typography>
-                            <Typography variant="body2">{book.category}</Typography>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            ))}
-        </Grid>
+        <>
+            <Header />
+            <Grid container spacing={3}>
+                {books.map((book) => (
+                    <Grid  item xs={12} sm={6} md={4} key={book.id}>
+                        <EntityCard
+                            title={book.name}
+                            navigateTo={`/books/${book.id}`}
+                            fields={[
+                                { label: 'Category', value: book.category, chip: true },
+                                { label: 'Author', value: book.authorFullName },
+                                { label: 'State', value: book.state, chip: true },
+                                { label: 'BookCopies', value: book.availableCopies },
+                            ]}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+        </>
     );
-}
+};
+
+export default Books;

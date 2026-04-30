@@ -30,4 +30,3 @@ public class JwtConstants {
         TOKEN_PREFIX = tokenPrefix;
     }
 }
-

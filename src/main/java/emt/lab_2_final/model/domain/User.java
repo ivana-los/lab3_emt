@@ -28,7 +28,7 @@ public class User extends BaseAuditableEntity implements UserDetails {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(unique = true)
+    @Column(unique = true,nullable = false)
     private String username;
 
     private String password;
@@ -85,5 +85,9 @@ public class User extends BaseAuditableEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setRole(Role role) {
+        this.role = role.ROLE_USER;
     }
 }

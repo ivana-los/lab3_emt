@@ -1,9 +1,11 @@
 package emt.lab_2_final.config;
 
+import java.util.List;
+
+
 import emt.lab_2_final.web.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -11,7 +13,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;  // ✅ додаден import
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,13 +22,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class JwtWebSecurityConfig {
-
     private final JwtFilter jwtFilter;
 
     public JwtWebSecurityConfig(JwtFilter jwtFilter) {
@@ -36,7 +35,7 @@ public class JwtWebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -47,7 +46,7 @@ public class JwtWebSecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         return RoleHierarchyImpl.withDefaultRolePrefix()
-                .role("ADMINISTRATOR").implies("USER")
+                .role("ADMIN").implies("USER")
                 .build();
     }
 
@@ -62,41 +61,57 @@ public class JwtWebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(corsCustomizer ->
+                        corsCustomizer.configurationSource(corsConfigurationSource())
+                )
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                 )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**"
-
-                        ).permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/books",
-                                "/api/books/paginated",
-                                "/api/books/short",
-                                "/api/books/details",
-                                "/api/books/top10Newest",
-                                "/api/books/book-author-country-graph",
-                                "/api/books/book-info-view",
-                                "/api/books/books-stats",
-                                "/api/user/register",
-                                "/api/user/login"
-                        ).authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/books/{id}/rent").authenticated()
-                        .requestMatchers(
-                                "/api/books/add",
-                                "/api/books/edit/**",
-                                "/api/books/delete/**"
-                        ).hasRole("ADMINISTRATOR")
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(authorizeHttpRequestsCustomizer ->
+                        authorizeHttpRequestsCustomizer
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/api/user/register",
+                                        "/api/user/login",
+                                        "/api/books",
+                                        "/api/books/{id}",
+                                        "/api/authors",
+                                        "/api/authors/{id}",
+                                        "/api/countries",
+                                        "/api/countries/{id}"
+                                )
+                                .permitAll()
+                                .requestMatchers(
+                                        "/api/user/me",
+                                        "/api/user/{username}"
+                                )
+                                .authenticated()
+                                .requestMatchers(
+                                        "/api/books",
+                                        "/api/books/{id}",
+                                        "/api/authors",
+                                        "/api/authors/{id}",
+                                        "/api/countries",
+                                        "/api/countries/{id}"
+                                )
+                                .hasRole("USER")
+                                .requestMatchers(
+                                        "/api/books/add",
+                                        "/api/books/{id}/edit",
+                                        "/api/books/{id}/delete",
+                                        "/api/books/add",
+                                        "/api/books/{id}/edit",
+                                        "/api/books/{id}/delete"
+                                )
+                                .hasRole("ADMIN")
+                                .anyRequest()
+                                .hasRole("ADMIN")
                 )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement(sessionManagementConfigurer ->
+                        sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }

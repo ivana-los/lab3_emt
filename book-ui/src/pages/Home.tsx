@@ -1,13 +1,19 @@
-import { Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, Container, Typography } from '@mui/material';
 
-export default function Home() {
+const HomePage = () => {
     return (
-        <>
-            <Typography variant="h3">Welcome to Library</Typography>
-            <Button variant="contained" component={Link} to="/books" sx={{ mt: 2 }}>
-                View Books
-            </Button>
-        </>
+        <Box sx={{ m: 0, p: 0 }}>
+            <Container maxWidth='xl' sx={{ mt: 3, py: 3 }}>
+                <Typography variant='h4' gutterBottom>
+                    Welcome to Library App! 👋
+                </Typography>
+                <Typography variant='body1' sx={{ mb: 4 }}>
+                    This is the home page.
+                </Typography>
+            </Container>
+        </Box>
+
     );
-}
+};
+
+export default HomePage;

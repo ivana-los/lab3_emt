@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import type { Author } from '../types';
 import AuthorApi from '../api/authorsapi';
 
-const useAuthors = () => {
-    const [authors, setAuthors] = useState<Author[]>([]);
+const useAuthor = (id: number) => {
+    const [author, setAuthor] = useState<Author | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        AuthorApi.findAll()
-            .then(setAuthors)
+        AuthorApi.findById(id)
+            .then(setAuthor)
             .catch(() => setError('Error'))
             .finally(() => setLoading(false));
-    }, []);
+    }, [id]);
 
-    return { authors, loading, error };
+    return { author, loading, error };
 };
 
-export default useAuthors;
+export default useAuthor;
