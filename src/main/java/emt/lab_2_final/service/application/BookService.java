@@ -8,6 +8,7 @@ import emt.lab_2_final.model.projections.BookDetailsProjection;
 import emt.lab_2_final.model.projections.BookShortProjection;
 import org.springframework.data.domain.Page;
 
+import java.nio.channels.FileChannel;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,4 +26,6 @@ public interface BookService {
 
     List<Book> getAllBooksWithAuthorAndCountry();
     List<DisplayBookDto> findTop10Newest();
+
+    Optional<DisplayBookDto> findById(Long id);
 }

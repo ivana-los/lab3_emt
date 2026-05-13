@@ -34,7 +34,7 @@ public record BookCreateDto(
         book.setCategory(category);
         book.setAuthor(author);
         book.setAvailableCopies(availableCopies);
-        book.setBookState(BookState.GOOD);
+        book.setBookState(BookState.BAD);
         book.setDatePublished(datePublished);
         return book;
     }

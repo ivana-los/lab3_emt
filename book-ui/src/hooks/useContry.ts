@@ -10,7 +10,7 @@ const useCountry = (id: number) => {
     useEffect(() => {
         CountryApi.findById(id)
             .then(setCountry)
-            .catch(() => setError('Грешка при вчитување'))
+            .catch(() => setError('Error loading..'))
             .finally(() => setLoading(false));
     }, [id]);
 

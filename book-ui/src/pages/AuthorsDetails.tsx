@@ -1,9 +1,10 @@
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 import { Box, Button, Divider, Paper, Typography } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import useAuthor from '../hooks/useAuthor';
 import LoadingSpinner from '../components/layout/LoadingSpinner';
 import ErrorMessage from '../components/layout/ErrorMessage';
+import { useNavigate } from 'react-router-dom';
 
 const AuthorDetails = () => {
     const { id } = useParams();

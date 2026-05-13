@@ -130,4 +130,11 @@ public class BookServiceImpl implements BookService {
                 bookRepository.findTop10ByOrderByDatePublishedDesc()
         );
     }
+
+    @Override
+    public Optional<DisplayBookDto> findById(Long id) {
+        return bookRepository
+                .findById(id)
+                .map(DisplayBookDto::from);
+    }
 }

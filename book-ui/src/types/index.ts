@@ -21,3 +21,18 @@ export interface Country {
     name: string;
     continent: string;
 }
+
+export class BookFormData {
+}
+
+export class BookDetails {
+}
+
+export class AuthorDetails {
+}
+
+export class AuthorFormData {
+}
+
+export class CountryFormData {
+}

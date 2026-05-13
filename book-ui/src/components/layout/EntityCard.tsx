@@ -1,5 +1,7 @@
-import { Card, CardContent, CardActionArea, Typography, Chip, Box } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Field {
     label: string;
@@ -11,35 +13,126 @@ interface Props {
     title: string;
     fields: Field[];
     navigateTo: string;
+    accentColor?: string;
+    onEdit?: () => void;
+    onDelete?: () => void;
 }
 
-const EntityCard = ({ title, fields, navigateTo }: Props) => {
+const EntityCard = ({ title, fields, navigateTo, accentColor = '#185FA5', onEdit, onDelete }: Props) => {
     const navigate = useNavigate();
 
     return (
-        <Card elevation={2} sx={{ height: '100%', borderRadius: 2, transition: 'transform 0.2s, box-shadow 0.2s', '&:hover': { transform: 'translateY(-4px)', boxShadow: 6 } }}>
-            <CardActionArea onClick={() => navigate(navigateTo)} sx={{ height: '100%' }}>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom noWrap sx={{ fontWeight: 'bold' }}>
-                        {title}
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        {fields.map((field) => (
-                            <Box key={field.label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="caption" color="text.secondary" sx={{ minWidth: 90 }}>
-                                    {field.label}:
+        <Box
+            onClick={() => navigate(navigateTo)}
+            sx={{
+                background: 'background.paper',
+                border: '0.5px solid',
+                borderColor: 'divider',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'transform 0.2s ease, border-color 0.2s ease',
+                '&:hover': {
+                    transform: 'translateY(-3px)',
+                    borderColor: 'text.disabled',
+                },
+            }}
+        >
+            <Box sx={{ height: '3px', width: '100%', bgcolor: accentColor, flexShrink: 0 }} />
+
+            <Box sx={{ p: '16px', flex: 1 }}>
+                <Typography
+                    noWrap
+                    sx={{
+                        fontSize: '15px',
+                        fontWeight: 600,
+                        letterSpacing: '-0.01em',
+                        color: 'background.paper',
+                        mb: '14px',
+                    }}
+                >
+                    {title}
+                </Typography>
+
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px', bgcolor: 'background.paper' }}>
+                    {fields.map((field) => (
+                        <Box key={field.label} sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Typography
+                                sx={{
+                                    fontSize: '11px',
+                                    fontWeight: 500,
+                                    letterSpacing: '0.04em',
+                                    textTransform: 'uppercase',
+                                    color: 'text.disabled',
+                                    minWidth: '72px',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                {field.label}
+                            </Typography>
+
+                            {field.chip ? (
+                                <Box
+                                    component="span"
+                                    sx={{
+                                        fontSize: '11px',
+                                        fontWeight: 500,
+                                        px: '8px',
+                                        py: '2px',
+                                        borderRadius: '4px',
+                                        border: '0.5px solid white',
+                                        borderColor: 'divider',
+                                        color: 'text.secondary',
+                                        bgcolor: 'action.hover',
+                                    }}
+                                >
+                                    {field.value}
+                                </Box>
+                            ) : (
+                                <Typography
+                                    sx={{
+                                        fontSize: '13px',
+                                        fontFamily: '"DM Mono", "Roboto Mono", monospace',
+                                        color: 'text.primary',
+                                    }}
+                                >
+                                    {field.value}
                                 </Typography>
-                                {field.chip ? (
-                                    <Chip label={field.value} size="small" variant="outlined" />
-                                ) : (
-                                    <Typography variant="body2">{field.value}</Typography>
-                                )}
-                            </Box>
-                        ))}
-                    </Box>
-                </CardContent>
-            </CardActionArea>
-        </Card>
+                            )}
+                        </Box>
+                    ))}
+                </Box>
+            </Box>
+
+            <Box
+                sx={{
+                    borderTop: '0.5px solid',
+                    borderColor: 'divider',
+                    px: '16px',
+                    py: '10px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}
+            >
+                <Box onClick={(e) => e.stopPropagation()} sx={{ display: 'flex', gap: '4px' }}>
+                    {onEdit && (
+                        <IconButton size="small" onClick={onEdit}>
+                            <EditIcon fontSize="small" />
+                        </IconButton>
+                    )}
+                    {onDelete && (
+                        <IconButton size="small" onClick={onDelete} color="error">
+                            <DeleteIcon fontSize="small" />
+                        </IconButton>
+                    )}
+                </Box>
+                <Typography sx={{ fontSize: '12px', color: 'text.disabled' }}>→</Typography>
+            </Box>
+        </Box>
     );
 };
 

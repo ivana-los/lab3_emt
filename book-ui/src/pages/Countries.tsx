@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import useCountries from '../hooks/useCountries';
-import EntityCard from '../components//layout/EntityCard';
+import EntityCard from '../components/layout/EntityCard';
 import LoadingSpinner from '../components/layout/LoadingSpinner';
 import ErrorMessage from '../components/layout/ErrorMessage';
 import Header from '../components/layout/Header';
@@ -13,11 +13,11 @@ const Countries = () => {
 
     return (
         <>
-            <Header  />
+            <Header title="Countries" subtitle={`Total: ${countries.length} countries`} />
             <Grid container spacing={3}>
                 {countries.map((country) => (
-                    <Grid item xs={12} sm={6} md={4} key={country.id}>
-                        <EntityCard
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={country.id}>
+                    <EntityCard
                             title={country.name}
                             navigateTo={`/countries/${country.id}`}
                             fields={[

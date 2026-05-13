@@ -1,8 +1,5 @@
 package emt.lab_2_final.web;
 
-
-
-
 import emt.lab_2_final.model.Book;
 import emt.lab_2_final.model.dto.BookCreateDto;
 import emt.lab_2_final.model.dto.DisplayBookDto;
@@ -36,6 +33,14 @@ public class BookController {
     @GetMapping
     public ResponseEntity<List<DisplayBookDto>> findAll() {
         return ResponseEntity.ok(bookService.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DisplayBookDto> findById(@PathVariable Long id) {
+        return bookService
+                .findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/paginated")
