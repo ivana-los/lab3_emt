@@ -2,6 +2,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import React from 'react';
 
 interface Field {
     label: string;
@@ -16,9 +17,10 @@ interface Props {
     accentColor?: string;
     onEdit?: () => void;
     onDelete?: () => void;
+    extraActions?: React.ReactNode;
 }
 
-const EntityCard = ({ title, fields, navigateTo, accentColor = '#185FA5', onEdit, onDelete }: Props) => {
+const EntityCard = ({ title, fields, navigateTo, accentColor = '#185FA5', onEdit, onDelete, extraActions }: Props) => {
     const navigate = useNavigate();
 
     return (
@@ -50,7 +52,7 @@ const EntityCard = ({ title, fields, navigateTo, accentColor = '#185FA5', onEdit
                         fontSize: '15px',
                         fontWeight: 600,
                         letterSpacing: '-0.01em',
-                        color: 'background.paper',
+                        color: 'text.primary',
                         mb: '14px',
                     }}
                 >
@@ -119,6 +121,7 @@ const EntityCard = ({ title, fields, navigateTo, accentColor = '#185FA5', onEdit
                 }}
             >
                 <Box onClick={(e) => e.stopPropagation()} sx={{ display: 'flex', gap: '4px' }}>
+                    {extraActions}
                     {onEdit && (
                         <IconButton size="small" onClick={onEdit}>
                             <EditIcon fontSize="small" />

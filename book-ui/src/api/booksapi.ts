@@ -19,6 +19,18 @@ const BookApi = {
     },
     delete: async (id: string) => {
         return await axiosInstance.delete<Book>(`/api/books/delete/${id}`);
+    },
+    getWishlist: async () => {
+        const response = await axiosInstance.get('/api/wishlist');
+        return response.data;
+    },
+    addToWishlist: async (bookId: number) => {
+        const response = await axiosInstance.post(`/api/wishlist/add/${bookId}`);
+        return response.data;
+    },
+    removeFromWishlist: async (bookId: number) => {
+        const response = await axiosInstance.delete(`/api/wishlist/remove/${bookId}`);
+        return response.data;
     }
 
 }

@@ -28,4 +28,5 @@ public interface BookService {
     List<DisplayBookDto> findTop10Newest();
 
     Optional<DisplayBookDto> findById(Long id);
+
 }

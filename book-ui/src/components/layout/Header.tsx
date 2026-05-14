@@ -1,5 +1,6 @@
-import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const navLinks = [
     { label: 'Books', path: '/books' },
@@ -29,7 +30,10 @@ const Navbar = () => {
                     ))}
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <Button color="inherit" onClick={() => navigate('/wishlist')}>
+                        Wishlist
+                    </Button>
                     <Button color="inherit" variant="outlined" onClick={() => navigate('/login')}>
                         Login
                     </Button>

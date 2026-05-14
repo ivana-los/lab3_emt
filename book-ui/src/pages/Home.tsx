@@ -26,7 +26,7 @@ const Home = () => {
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={section.title}>
                             <Paper elevation={3} sx={{ p: 4, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                                 <Typography variant="h5" sx={{ mb: 6, color: '#e5e4e7' }}>{section.title}</Typography>
-                                <Typography variant="body2" color="text.secondary" textAlign="center">
+                                <Typography sx={{ textAlign: 'center' }}>
                                     {section.description}
                                 </Typography>
                                 <Button variant="contained" onClick={() => navigate(section.path)} sx={{ mt: 'auto' }}>

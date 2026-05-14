@@ -27,8 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserService userService;
     private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public JwtFilter(JwtHelper jwtHelper, UserService userService,
-                     HandlerExceptionResolver handlerExceptionResolver) {
+    public JwtFilter(JwtHelper jwtHelper, UserService userService, HandlerExceptionResolver handlerExceptionResolver) {
         this.jwtHelper = jwtHelper;
         this.userService = userService;
         this.handlerExceptionResolver = handlerExceptionResolver;
@@ -40,7 +39,6 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
         String headerValue = request.getHeader(JwtConstants.HEADER);
         if (headerValue == null || !headerValue.startsWith(JwtConstants.TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
@@ -64,17 +62,21 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             if (!jwtHelper.isExpired(token)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(
-                                user.get(),
-                                null,
-                                user.get().getAuthorities()
-                        );
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        user.get(),
+                        null,
+                        user.get().getAuthorities()
+                );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         } catch (JwtException jwtException) {
-            handlerExceptionResolver.resolveException(request, response, null, jwtException);
+            handlerExceptionResolver.resolveException(
+                    request,
+                    response,
+                    null,
+                    jwtException
+            );
             return;
         }
 

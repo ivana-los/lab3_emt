@@ -2,7 +2,6 @@ package emt.lab_2_final.config;
 
 import java.util.List;
 
-
 import emt.lab_2_final.web.filter.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,13 +72,7 @@ public class JwtWebSecurityConfig {
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/api/user/register",
-                                        "/api/user/login",
-                                        "/api/books",
-                                        "/api/books/{id}",
-                                        "/api/authors",
-                                        "/api/authors/{id}",
-                                        "/api/countries",
-                                        "/api/countries/{id}"
+                                        "/api/user/login"
                                 )
                                 .permitAll()
                                 .requestMatchers(
@@ -98,11 +91,15 @@ public class JwtWebSecurityConfig {
                                 .hasRole("USER")
                                 .requestMatchers(
                                         "/api/books/add",
-                                        "/api/books/{id}/edit",
-                                        "/api/books/{id}/delete",
-                                        "/api/books/add",
-                                        "/api/books/{id}/edit",
-                                        "/api/books/{id}/delete"
+                                        "/api/books/edit/**",
+                                        "/api/books/delete/**",
+                                        "/api/authors/add",
+                                        "/api/authors/edit/**",
+                                        "/api/authors/delete/**",
+                                        "/api/countries/add",
+                                        "/api/countries/edit/**",
+                                        "/api/countries/delete/**",
+                                        "/api/wishlist/**"
                                 )
                                 .hasRole("ADMIN")
                                 .anyRequest()

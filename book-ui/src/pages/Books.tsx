@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DeleteBookDialog from "../components/product/DeleteBookDialog.tsx";
 import EditBookDialog from "../components/product/EditBookDialog.tsx";
 import useBooks from "../hooks/useBooks.ts";
-import type { Book, BookFormData } from "../api/types/book.ts"; // 1. еден извор на типот
+import type { Book, BookFormData } from "../api/types/book.ts";
 import LoadingSpinner from "../components/layout/LoadingSpinner.tsx";
 import ErrorMessage from "../components/layout/ErrorMessage.tsx";
 import Header from "../components/layout/Header.tsx";
 import AddBookDialog from "../components/product/AddBookDialog.tsx";
-import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import {
+    Box, Button, Grid, IconButton, ToggleButton,
+    ToggleButtonGroup, Typography
+} from "@mui/material";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import EntityCard from "../components/layout/EntityCard.tsx";
+import BookApi from "../api/booksapi.ts";
 
 const Books = () => {
     const { books, loading, error, onAdd, onDelete, onEdit } = useBooks();
@@ -16,12 +22,19 @@ const Books = () => {
     const [openAdd, setOpenAdd] = useState(false);
     const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
     const [bookToEdit, setBookToEdit] = useState<Book | null>(null);
+    const [wishlistIds, setWishlistIds] = useState<number[]>([]);
+
+    useEffect(() => {
+        BookApi.getWishlist()
+            .then(wishlist => setWishlistIds(wishlist.books.map((b: any) => b.id)))
+            .catch(() => {});
+    }, []);
 
     if (loading) return <LoadingSpinner />;
     if (error) return <ErrorMessage message={error} />;
 
     const filteredBooks = selectedState
-        ? books.filter(book => book.state === selectedState) // 2. state -> bookState
+        ? books.filter(book => book.state === selectedState)
         : books;
 
     const handleAdd = async (data: BookFormData) => {
@@ -39,11 +52,24 @@ const Books = () => {
         setBookToEdit(null);
     };
 
+    const handleWishlist = async (bookId: number) => {
+        try {
+            if (wishlistIds.includes(bookId)) {
+                await BookApi.removeFromWishlist(bookId);
+                setWishlistIds(prev => prev.filter(id => id !== bookId));
+            } else {
+                await BookApi.addToWishlist(bookId);
+                setWishlistIds(prev => [...prev, bookId]);
+            }
+        } catch (e) {
+            console.error("Wishlist error", e);
+        }
+    };
+
     return (
         <>
             <Header title="Books" subtitle={`Total: ${filteredBooks.length} books`} />
 
-            {/* 3. Add копче надвор од Header */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
                 <Button variant="contained" onClick={() => setOpenAdd(true)}>Add Book</Button>
             </Box>
@@ -87,16 +113,27 @@ const Books = () => {
 
             <Grid container spacing={3}>
                 {filteredBooks.map((book) => (
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={book.id}> {/* 4. item xs/sm/md -> size */}
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={book.id}>
                         <EntityCard
-                            title={book.name} // 5. name -> title
+                            title={book.name}
                             navigateTo={`/books/${book.id}`}
                             onEdit={() => setBookToEdit(book)}
                             onDelete={() => setBookToDelete(book)}
+                            extraActions={
+                                <IconButton
+                                    size="small"
+                                    onClick={() => handleWishlist(book.id)}
+                                    color="error"
+                                >
+                                    {wishlistIds.includes(book.id)
+                                        ? <FavoriteIcon fontSize="small" />
+                                        : <FavoriteBorderIcon fontSize="small" />}
+                                </IconButton>
+                            }
                             fields={[
                                 { label: 'Category', value: book.category, chip: true },
                                 { label: 'Author', value: book.authorFullName },
-                                { label: 'State', value: book.state, chip: true }, // 6. state -> bookState
+                                { label: 'State', value: book.state, chip: true },
                                 { label: 'Available Copies', value: book.availableCopies },
                             ]}
                         />

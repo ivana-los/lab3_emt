@@ -88,6 +88,6 @@ public class User extends BaseAuditableEntity implements UserDetails {
     }
 
     public void setRole(Role role) {
-        this.role = role.ROLE_USER;
+        this.role = role;
     }
 }
